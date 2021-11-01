@@ -1,8 +1,10 @@
 class RecipeCard extends HTMLElement {
   constructor() {
     // Part 1 Expose - TODO
+    super();
 
     // You'll want to attach the shadow DOM here
+    this.attachShadow({mode: 'open'});
   }
 
   set data(data) {
@@ -100,6 +102,67 @@ class RecipeCard extends HTMLElement {
     // created in the constructor()
 
     // Part 1 Expose - TODO
+   
+    // addding image to card
+    const recipeImage = document.createElement('img');
+    recipeImage.setAttribute('src', searchForKey(data, "thumbnailUrl"));
+    card.appendChild(recipeImage);
+
+    // adding title to card
+    let title = document.createElement('p');
+    let link = document.createElement('a');
+    title.setAttribute('class', 'title');
+    link.setAttribute('href', getUrl(data));
+    link.textContent = searchForKey(data, 'headline');
+    title.appendChild(link);
+    card.appendChild(title);
+
+    // adding organization to card
+    let organization = document.createElement('div');
+    organization.setAttribute('class', "organization");
+    organization.innerHTML = getOrganization(data);
+    card.append(organization);
+
+    // adding ratings to card
+    let rating = document.createElement('div'); // overall rating element NOT THE VALUE
+    let count = document.createElement('span'); // ...
+    let starsIcon = document.createElement('img');
+    let score = document.createElement('span');
+    let ratingCount = searchForKey(data, "ratingCount");
+    let ratingValue = searchForKey(data, "ratingValue");
+
+    rating.setAttribute('class', "rating");
+    rating.appendChild(score);
+
+    if (ratingValue > 0) {
+      starsIcon.setAttribute('src', `assets/images/icons/${ Math.round(ratingValue) }-star.svg`);
+
+      score.innerHTML = ratingValue;
+      count.innerHTML = `(${ ratingCount })`;
+
+      rating.appendChild(starsIcon);
+      rating.appendChild(count);
+    }
+    else {
+      score.innerHTML = "No Reviews Yet";
+    }
+    card.append(rating);
+
+
+     // adding time to card
+     let time = document.createElement("time");
+     time.innerHTML = convertTime(searchForKey(data, "totalTime"));
+     card.append(time); 
+
+    // adding ingredients to card
+    let ingredients = document.createElement('p');
+    ingredients.setAttribute('class', "ingredients");
+    ingredients.innerHTML = createIngredientList(searchForKey(data, "recipeIngredient"));
+    card.append(ingredients);
+
+    // attaching root and style elements to shadoww
+    this.shadowRoot.appendChild(styleElem);
+    this.shadowRoot.appendChild(card);
   }
 }
 
