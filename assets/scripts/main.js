@@ -5,7 +5,10 @@
 const recipes = [
   'https://introweb.tech/assets/json/ghostCookies.json',
   'https://introweb.tech/assets/json/birthdayCake.json',
-  'https://introweb.tech/assets/json/chocolateChip.json'
+  'https://introweb.tech/assets/json/chocolateChip.json',
+  'assets/recipes/cheesecake.json',
+  'assets/recipes/hokeypokey.json',
+  'assets/recipes/tteokbokki.json'
 ];
 
 // Once all of the recipes that were specified above have been fetched, their
@@ -47,7 +50,7 @@ async function fetchRecipes() {
       fetch(recipes[i])
         .then(response => response.json())
         .then(data => {
-          recipeData[i] = data;
+          recipeData[recipes[i]] = data;
 
           //make sure ricepeData has proper number of json objects before resolving
           if(Object.keys(recipeData).length == recipes.length) {
@@ -69,10 +72,10 @@ function createRecipeCards() {
   // show any others you've added when the user clicks on the "Show more" button.
 
   // Part 1 Expose - TODO
-  for (let i = 0; i < recipes.length; i++) {
+  for (let i = 0; i < 3; i++) { // for explore limit ourselves to showing only first 3
     let recipeCard = document.createElement('recipe-card');
-    
-    recipeCard.data = recipeData[i];
+
+    recipeCard.data = recipeData[recipes[i]]; //changed i to recipes[i]
     document.querySelector('main').appendChild(recipeCard);
   }
 }
@@ -86,4 +89,26 @@ function bindShowMore() {
   // in the recipeData object where you stored them/
 
   // Part 2 Explore - TODO
+  const showMore = document.querySelector('button');
+  showMore.addEventListener('click', function() {
+    if (showMore.textContent =="Show more") {
+      showMore.textContent = "Show less";
+      // creating and adding more recipes
+      for (let i = 3; i < recipes.length; i++) {
+        const recipeCard = document.createElement('recipe-Card');
+        recipeCard.data = recipeData[recipes[i]];
+        document.querySelector('main').appendChild(recipeCard);
+      }
+    }
+
+    else if (showMore.textContent == "Show less") {
+      showMore.textContent = "Show more";
+      // deleting the last recipe till there's only 3
+
+      for (let i = recipes.length; i > 3; i--) {
+        document.querySelector('main').removeChild(document.querySelector('main').lastElementChild);
+      }
+    }
+  });
 }
+
